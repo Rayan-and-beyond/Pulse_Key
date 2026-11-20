@@ -27,6 +27,7 @@ Pulse Key investigates whether an enrolled wearer's physiological signal can str
 | `docs/MAC_IMPORT.md` | How to bring the actual Mac Rust code into the repo safely |
 | `evidence/source-archives/` | Original ZIP snapshots to preserve provenance |
 | `mac-daemon/` | Explicit placeholder until original Mac source is imported |
+| [`data/`](data/) | Neutral reference-recordings release; externally collected, de-identified research data |
 
 ## Run the verified offline tests (macOS Apple Silicon or Linux)
 
@@ -46,6 +47,6 @@ Inspect `docs/research/current/2026-11-03_NEXT_EXPERIMENT_PROTOCOL.md`. Freeze e
 
 ## Privacy and provenance
 
-All original ring keys, session recordings, `oura.db`, biometric templates, personally identifying metadata and human-subject consent records stay off GitHub. `.gitignore` has broad protections; review `docs/SECURITY.md` and run `scripts/verify_clean_repo.py` before every push. This repository is intentionally private by design.
+All locally captured ring recordings, keys, `oura.db`, biometric templates, personally identifying metadata and human-subject consent records stay off GitHub. Separately licensed and publicly released third-party reference recordings are distributed through [GitHub Releases](https://github.com/Rayan-and-beyond/Pulse_Key/releases/tag/reference-recordings-v1) for non-commercial research with source attribution in `research/benchmarks/public_waveform/README.md`. `.gitignore` has broad protections; review `docs/SECURITY.md` and run `scripts/verify_clean_repo.py` before every push. This repository is public; keep individual enrollment material and personal biometric data strictly local.
 
 The research snapshot is dated 3 November 2026. Packaging occurred 20 November 2026. No new physical-ring tests were run during packaging.
