@@ -13,7 +13,9 @@ patterns=[
 errors=[]
 for name in tracked:
   p=root/name
-  if any(q.search(name) for q in patterns):errors.append(f'PROHIBITED PATH: {name}')
+  # Permit only explanatory metadata in data/, never underlying recordings.
+  if any(q.search(name) for q in patterns) and name != 'data/README.md':
+    errors.append(f'PROHIBITED PATH: {name}')
   if not p.is_file():continue
   if p.stat().st_size>5_000_000:errors.append(f'OVERSIZED FILE: {name}')
   if p.suffix in ('.py','.md','.yml','.yaml','.txt','.json'):
