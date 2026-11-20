@@ -1,0 +1,81 @@
+name: Import reference recordings
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/import-reference-recordings.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: reference-recordings-import
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - name: Check out the public research repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install transfer dependencies
+        run: python -m pip install --upgrade huggingface_hub hf_xet
+
+      - name: Download and verify 20 recordings
+        env:
+          HF_HUB_DISABLE_PROGRESS_BARS: "1"
+          HF_HUB_DOWNLOAD_TIMEOUT: "180"
+        run: |
+          python -m py_compile scripts/import_reference_recordings.py
+          python scripts/import_reference_recordings.py --out "$RUNNER_TEMP/recordings"
+
+      - name: Attach original recordings to the repository release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="reference-recordings-v1"
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --draft \
+              --title "Reference recordings" \
+              --notes "Original pseudonymized research recordings, distributed under CC BY-NC 4.0 for non-commercial study. Source, attribution, license and methodology: https://github.com/$GITHUB_REPOSITORY/blob/main/research/benchmarks/public_waveform/README.md"
+          fi
+          shopt -s nullglob
+          files=( "$RUNNER_TEMP"/recordings/P*_Ring_raw.npz )
+          if [ "${#files[@]}" -ne 20 ]; then
+            echo "Expected 20 recording files, found ${#files[@]}"
+            exit 1
+          fi
+          for file in "${files[@]}" "$RUNNER_TEMP/recordings/SHA256SUMS.txt" "$RUNNER_TEMP/recordings/MANIFEST.json"; do
+            success=0
+            for attempt in 1 2 3; do
+              if gh release upload "$TAG" "$file" --clobber; then
+                success=1
+                break
+              fi
+              echo "Upload attempt $attempt failed for $(basename "$file")"
+              sleep $((attempt * 10))
+            done
+            if [ "$success" -ne 1 ]; then
+              echo "Failed to upload $(basename "$file")"
+              exit 1
+            fi
+          done
+          count="$(gh release view "$TAG" --json assets --jq '.assets | length')"
+          if [ "$count" -lt 22 ]; then
+            echo "Release has $count assets; expected at least 22"
+            exit 1
+          fi
+          gh release edit "$TAG" --draft=false
+          echo "Verified: $count release attachments."
+          gh release view "$TAG" --json url --jq '.url'
