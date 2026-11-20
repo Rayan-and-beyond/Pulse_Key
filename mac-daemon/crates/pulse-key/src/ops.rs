@@ -2,6 +2,8 @@ use crate::engine::Event;
 use oura_link::ble::BleTransport;
 use oura_link::client::{AcmSample, HeartRateSample};
 use oura_link::OuraClient;
+use oura_link::transport::Transport;
+use oura_protocol::protocol::{self, feature, feature_mode};
 use std::future::Future;
 use std::pin::Pin;
 use std::sync::{Arc, Mutex};
@@ -70,7 +72,10 @@ impl RingOps for RealRingOps {
             if let Some(h) = self.accel_task.lock().unwrap().take() {
                 h.abort();
             }
-            Ok(self.client.stop_realtime().await?)
+            // In the pinned upstream API, stop the realtime ACM stream by writing
+            // the protocol teardown request through the authenticated transport.
+            self.client.transport().write(&protocol::req_realtime_off()).await?;
+            Ok(())
         })
     }
 
@@ -102,7 +107,13 @@ impl RingOps for RealRingOps {
             if let Some(h) = self.hr_task.lock().unwrap().take() {
                 h.abort();
             }
-            Ok(self.client.stop_live_hr().await?)
+            // Restore the daytime-HR feature to automatic mode when this
+            // ceremony ends, matching upstream live_heart_rate teardown.
+            self.client.transport().write(&protocol::req_set_feature_mode(
+                feature::DAYTIME_HR,
+                feature_mode::AUTOMATIC,
+            )).await?;
+            Ok(())
         })
     }
 

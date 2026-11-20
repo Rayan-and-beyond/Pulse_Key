@@ -1,17 +1,23 @@
-# Rust Pulse Key crate imported
+# Rust Pulse Key daemon
 
-The original `pulse-key.zip` Rust source has been imported into `mac-daemon/crates/pulse-key/`.
+This directory contains the actual Ring 4 tap/liveness authorization demonstration, imported from a user-supplied ZIP.
 
-Included: Cargo manifest, Rust daemon and state machine, tap detector, verification logic, BLE integration hooks, local web UI, example tool, and deterministic Rust unit tests.
+## Build
 
-**Build dependency still missing:** This source archive is one crate from a larger Cargo workspace. Its manifest inherits `version`, `edition`, `license`, and `repository` from `[workspace.package]`, and requires a sibling `../oura-link` crate. The root workspace manifest and `oura-link` implementation were not supplied. Import them from your Mac before expecting `cargo test -p pulse-key` to run.
+```bash
+cd mac-daemon
+cargo test --workspace
+cargo build --workspace
+```
 
-**Public release safety edits:**
-- The original device MAC address and serial were removed from `src/main.rs`. Supply `--expected-mac`, `--expected-serial`, `--address`, and `--key-file` locally when running the crate.
-- The key file contents were absent from the uploaded archive and remain excluded.
-- Six historical accelerometer `.jsonl` fixture recordings were excluded. The six fixture-dependent tests are behind the `private-fixtures` feature, with instructions in `tests/fixtures/README.md`.
-- macOS metadata was excluded.
+The Rust Cargo workspace and pinned upstream `oura-link`/ `oura-protocol` dependencies are defined here. The live BLE client requires your Mac and local ring hardware at runtime; software-only tests use `MockRingOps` and Tokio virtual time.
 
-The Rust service is a research demonstration of device possession, tap intent, and fresh heartbeat sensing. It does **not** incorporate the offline Python wearer-identity research verifier.
+## Structure
 
-See `../../docs/MAC_IMPORT.md` for the rest of the workspace import procedure.
+- `crates/pulse-key/src/engine.rs`: authorization state machine
+- `crates/pulse-key/src/ops.rs`: real BLE implementation behind the `RingOps` trait
+- `crates/pulse-key/src/tap.rs`: gesture extraction
+- `crates/pulse-key/src/verify.rs`: possession/gesture/pulse checks; identity currently skipped
+- `crates/pulse-key/src/server.rs`: loopback web API and vault demonstration
+
+See `../docs/MAC_IMPORT.md` for implementation and privacy caveats.

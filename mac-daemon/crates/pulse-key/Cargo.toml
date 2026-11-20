@@ -11,7 +11,10 @@ default = []
 private-fixtures = []
 
 [dependencies]
-oura-link = { path = "../oura-link" }
+# The upstream Git workspace contains both crates and their internal path dependencies.
+# Pinned to a commit to keep the build reproducible.
+oura-link = { git = "https://github.com/Th0rgal/open_oura", rev = "e57c43ce5fe0cf9a646afa790bda3731be767507" }
+oura-protocol = { git = "https://github.com/Th0rgal/open_oura", rev = "e57c43ce5fe0cf9a646afa790bda3731be767507" }
 clap = { version = "4", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }
 anyhow = "1"
