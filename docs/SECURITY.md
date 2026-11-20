@@ -2,9 +2,9 @@
 
 ## Secrets and human biometric data
 
-Never commit or push ring pairing/authentication keys, credentials, OAuth tokens, original `oura.db`, raw or derived pulse sequences, private enrollment profiles, consent records, participant-identifying metadata, serial numbers or host-device addresses. Private repositories still expose data to GitHub's hosting and access control; sensitive human-subject samples should remain encrypted and local.
+Never commit or push ring pairing/authentication keys, credentials, OAuth tokens, original `oura.db`, locally captured private raw or derived pulse sequences, private enrollment profiles, consent records, participant-identifying metadata, serial numbers or host-device addresses. Private repositories still expose data to GitHub's hosting and access control; sensitive human-subject samples should remain encrypted and local.
 
-The repository includes only source code, synthetic/unit fixtures, aggregate scientific reports and the provenance ZIPs that were checked for excluded private artifacts.
+The Git tree contains source code, synthetic/unit fixtures, aggregate scientific reports and the provenance ZIPs that were checked for excluded private artifacts. Separately collected, already-public, de-identified third-party recordings may be made available as GitHub Release attachments under their original attribution and non-commercial license. This authorization does not cover locally collected or private participant recordings.
 
 ## Threat model
 
