@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-03",
+  "environment": "isolated offline container reproduction of user-provided Oura historical capture database",
+  "input_original_database_sha256": "c8e9f0ed8045b83036348c687f7fa4b280a08496182bce9f3253271d4ef67955",
+  "input_private_audit_sha256": "cd0119edac72e3b8a4706c22ecbff6493834fb73c3de5d744d843344ce700818",
+  "original_v1_feature_extractor_sha256": "9bb4609ba8b5a2a2032f5da76367b54e529045c983688ccbd6c5fd8c6fd5d8ee",
+  "new_v2_files_sha256": {
+    "feature_extraction.py": "96a72d73afe46f591c83701a4d2ee90d1f15f220c2c7c48dc23430217efc75e5",
+    "observations.py": "a13c71008f9d7d12aa82261444bd6984b76358190e89db0b79b191e39fae83c3",
+    "verifier.py": "a4848dcf0c4ce9a2b00900d33c9d576bdcae39d7cfad4fa043ca1e181c7d8efe",
+    "tests/test_verifier.py": "28fa56e5daab3ea1bc6935ac9b232c5617be94c69b6e91e8afbcdb67172f11e5"
+  },
+  "test_command": "PULSE_KEY_TEST_DB=<private db> PULSE_KEY_TEST_AUDIT=<private JSON> python -m pytest -q",
+  "tests_passed": 20,
+  "tests_failed": 0,
+  "archived_calibration_bursts_checked": 15,
+  "binary_register_multiset_correspondence": 15,
+  "corrected_offline_profile_schema": "pulse-key-offline-identity-v2-corrected-ppg",
+  "enrollment_start_ids": [
+    715158,
+    2659172,
+    2661558
+  ],
+  "optical_interval": [
+    -5,
+    0
+  ],
+  "corrected_owner_fitted_waveform_threshold": 0.51794,
+  "corrected_heldout_scores": [
+    {
+      "start": 2699937,
+      "label": "X",
+      "score": 0.170049,
+      "full_decision": "ACCEPT",
+      "waveform_pass": true,
+      "optical_difference": 0
+    },
+    {
+      "start": 2703303,
+      "label": "Y",
+      "score": 0.188865,
+      "full_decision": "REJECT",
+      "waveform_pass": true,
+      "optical_difference": 3
+    },
+    {
+      "start": 2708139,
+      "label": "Y",
+      "score": 0.19678,
+      "full_decision": "REJECT",
+      "waveform_pass": true,
+      "optical_difference": 2
+    }
+  ],
+  "post_enrollment_chronological_x": {
+    "ACCEPT": 1,
+    "REJECT": 0,
+    "INCONCLUSIVE": 2
+  },
+  "post_enrollment_chronological_y": {
+    "ACCEPT": 0,
+    "REJECT": 2,
+    "INCONCLUSIVE": 4
+  },
+  "security_claim": "none; these are development replay outcomes from two known individuals and post-hoc candidate selection",
+  "live_mac_daemon_modified": false,
+  "private_raw_database_exported": false
+}

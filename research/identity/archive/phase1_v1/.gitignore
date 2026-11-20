@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+owner_profile_private.json
+*private*.json
+oura.db
+oura.db-*
+*.key
+*.log

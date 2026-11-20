@@ -1,0 +1,34 @@
+{
+  "project": "Pulse Key",
+  "date": "2026-10-31",
+  "analysis_type": "frozen_phase1_waveform_only_cross_device_exploratory",
+  "source": "snowballlab/Multisite-PPG raw ring PPG at 100 Hz",
+  "extractor_sha256": "9bb4609ba8b5a2a2032f5da76367b54e529045c983688ccbd6c5fd8c6fd5d8ee",
+  "owner_enrollment_starts": [715158, 2659172, 2661558],
+  "owner_waveform_distance_threshold": 0.793096,
+  "candidate_public_windows": 163,
+  "usable_public_windows": 139,
+  "feature_quality_failures": 24,
+  "participants_selected": 18,
+  "participants_with_usable_windows": 18,
+  "public_windows_passing_x_waveform_score": 82,
+  "public_participants_with_at_least_one_waveform_pass": 17,
+  "x_owner_real_heldout_distance": 0.38668,
+  "y_real_ring_known_distances": [0.386518, 0.521412],
+  "public_windows_at_or_below_owner_heldout_distance": 8,
+  "public_participants_any_window_below_owner_heldout_distance": 6,
+  "public_distance_quantiles_0_5_25_50_75_95_100": [0.238851, 0.372861, 0.532559, 0.700626, 1.05852, 1.385379, 1.646041],
+  "within_public_subject_equal_auc": {
+    "dct_same_day": {"auc": 0.6, "bootstrap_95": [0.5022, 0.7011], "n_reference_subjects": 10, "genuine_comparisons": 25, "pooled_auc": 0.5957},
+    "dct_later_day": {"auc": 0.5704, "bootstrap_95": [0.4969, 0.6570], "n_reference_subjects": 15, "genuine_comparisons": 96, "pooled_auc": 0.4676},
+    "rise_same_day": {"auc": 0.6576, "bootstrap_95": [0.5411, 0.7627], "n_reference_subjects": 10, "genuine_comparisons": 25, "pooled_auc": 0.6669},
+    "rise_later_day": {"auc": 0.5468, "bootstrap_95": [0.4553, 0.6428], "n_reference_subjects": 15, "genuine_comparisons": 96, "pooled_auc": 0.4436}
+  },
+  "critical_limitations": [
+    "Different ring hardware, possibly different device units; waveform-only score pass is not a real Oura false-acceptance rate.",
+    "No N5-N3 Oura calibration registers exist in public dataset; full verifier was not run against public waveforms.",
+    "Multiple windows from a participant are correlated; subject bootstrap is exploratory.",
+    "Owner threshold and feature choice were previously explored on X/Y captures; retrospective model selection bias remains.",
+    "No participant identities were inferred or linked."
+  ]
+}

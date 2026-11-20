@@ -1,0 +1,22 @@
+name: offline-research-tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  phase1-v2:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline test dependencies
+        run: python -m pip install -r research/identity/phase1_v2/requirements.txt pytest
+      - name: Research-only tests, no private biomedical data
+        working-directory: research/identity/phase1_v2
+        run: python -m pytest -q
+      - name: Privacy scan
+        run: python3 scripts/verify_clean_repo.py
