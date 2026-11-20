@@ -1,0 +1,9 @@
+/target/
+/tests/fixtures/*.jsonl
+/*.key
+/*.db
+/*.sqlite*
+/vault.txt
+.env
+.env.*
+.DS_Store

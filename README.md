@@ -2,13 +2,13 @@
 
 **Research-stage physiological authentication using an Oura Ring 4 and a local macOS service.**
 
-Pulse Key investigates whether an enrolled wearer's physiological signal can strengthen an authorization decision while retaining explicit user intent, local ring possession and live sensing. This repository contains a **reproducible offline identity research engine**, historical evidence, and a research plan. The original Mac-based Rust tap/liveness demo is documented but **its source has not yet been imported**.
+Pulse Key investigates whether an enrolled wearer's physiological signal can strengthen an authorization decision while retaining explicit user intent, local ring possession and live sensing. This repository contains a **reproducible offline identity research engine**, historical evidence, and a research plan. The original Rust tap/liveness crate source is now under `mac-daemon/crates/pulse-key/`. Its sibling `oura-link` dependency and parent Cargo workspace are still needed for a full Rust build.
 
 > **Security status (20 November 2026):** Identity verification has not been validated prospectively. The offline research engine deliberately returns `authorized: false`. Do not deploy it as an authentication factor or treat the published experiments as a measured false acceptance rate.
 
 ## What has actually been built
 
-- A separate local Rust demonstration was previously reported running with the physical old Ring 4: double tap, fresh heartbeat, local vault unlock and relock on ring removal. The original Rust source is **not included in this repository snapshot**. It showed device custody, intent and pulse liveness, **not wearer identity**.
+- A separate local Rust demonstration was previously reported running with the physical old Ring 4: double tap, fresh heartbeat, local vault unlock and relock on ring removal. The original Rust crate source has been imported with device-specific constants removed and private recorded-session fixtures excluded. A complete build still needs the sibling `oura-link` crate and workspace manifest. It showed device custody, intent and pulse liveness, **not wearer identity**.
 - A Python research engine parses historical Oura CVA PPG bursts, reconstructs waveforms and extracts optical calibration telemetry; it uses quality gates and a conservative `ACCEPT` / `REJECT` / `INCONCLUSIVE` result.
 - The corrected **Phase 1 v2** engine repairs a waveform decoder defect found on 3 November 2026. It remains isolated from the live Mac authorization path.
 - Historical ring-pair exploratory data suggested a sign difference in the `N5 - N3` optical calibration feature; testing involved only two wearers and post-hoc analysis. No validated cross-day or population generalization is claimed.
@@ -24,9 +24,9 @@ Pulse Key investigates whether an enrolled wearer's physiological signal can str
 | `docs/research/history/` | Earlier research reports and dated limitations |
 | `docs/ARCHITECTURE.md` | Existing vs proposed components and trust boundaries |
 | `docs/SECURITY.md` | Threat model and private-data rules |
-| `docs/MAC_IMPORT.md` | How to bring the actual Mac Rust code into the repo safely |
+| `docs/MAC_IMPORT.md` | Rust source import status and missing workspace dependencies |
 | `evidence/source-archives/` | Original ZIP snapshots to preserve provenance |
-| `mac-daemon/` | Explicit placeholder until original Mac source is imported |
+| `mac-daemon/crates/pulse-key/` | Imported Rust tap/liveness daemon; requires missing workspace and sibling `oura-link` dependency |
 | [`data/`](data/) | Neutral reference-recordings release; externally collected, de-identified research data |
 
 ## Run the verified offline tests (macOS Apple Silicon or Linux)

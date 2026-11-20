@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pulse Key</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #09090b;
+    --fg: #fafafa;
+    --dim: #a1a1aa;
+    --faint: #52525b;
+    --line: rgba(255, 255, 255, 0.08);
+    --card: rgba(255, 255, 255, 0.03);
+    --accent: #8b8b93;
+    --glow: rgba(255, 255, 255, 0.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(1200px 800px at 50% -10%, rgba(255, 255, 255, 0.06), transparent 60%), var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body[data-state="armed"] { --accent: #f5b453; --glow: rgba(245, 180, 83, 0.28); }
+  body[data-state="measuring"] { --accent: #6aa9ff; --glow: rgba(106, 169, 255, 0.30); }
+  body[data-state="unlocked"] { --accent: #4ade80; --glow: rgba(74, 222, 128, 0.30); }
+  main {
+    width: min(92vw, 460px);
+    padding: 48px 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 26px;
+  }
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .wordmark .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 14px var(--glow);
+    transition: background 0.5s, box-shadow 0.5s;
+  }
+  .ring {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 0 1px var(--line) inset, 0 0 80px var(--glow);
+    transition: box-shadow 0.6s ease;
+  }
+  .ring::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+  }
+  .ring::after {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    opacity: 0.5;
+  }
+  body[data-state="armed"] .ring { animation: breathe 2.2s ease-in-out infinite; }
+  body[data-state="measuring"] .ring { animation: breathe 1.1s ease-in-out infinite; }
+  @keyframes breathe {
+    50% { box-shadow: 0 0 0 1px var(--line) inset, 0 0 130px var(--glow), 0 0 0 10px rgba(255, 255, 255, 0.02); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ring { animation: none !important; }
+  }
+  .core {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 60%);
+    display: grid;
+    place-items: center;
+  }
+  #st {
+    font-size: 15px;
+    color: var(--dim);
+    letter-spacing: 0.02em;
+  }
+  #bpm { display: none; }
+  body[data-state="unlocked"] #bpm { display: block; }
+  body[data-state="unlocked"] #st { display: none; }
+  #bpmval {
+    font-size: 64px;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  #bpm small {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-top: 2px;
+  }
+  #hint {
+    color: var(--dim);
+    font-size: 14.5px;
+    line-height: 1.5;
+    max-width: 36ch;
+    min-height: 44px;
+  }
+  #reason {
+    color: #f87171;
+    font-size: 13.5px;
+    line-height: 1.5;
+    min-height: 20px;
+    max-width: 40ch;
+  }
+  button {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 15.5px;
+    font-weight: 600;
+    border-radius: 999px;
+    border: 0;
+    background: #fafafa;
+    color: #09090b;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.2s;
+    font-family: inherit;
+  }
+  button:active:not(:disabled) { transform: scale(0.985); }
+  button:disabled {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.35);
+    cursor: default;
+  }
+  #vault {
+    display: none;
+    width: 100%;
+    padding: 18px;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    text-align: left;
+  }
+  #vault .label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 8px;
+  }
+  #vault .body {
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--fg);
+  }
+  #log {
+    width: 100%;
+    text-align: left;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--faint);
+    max-height: 96px;
+    overflow: auto;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+    white-space: pre-wrap;
+  }
+</style>
+</head>
+<body data-state="locked">
+<main>
+  <div class="wordmark"><span class="dot"></span>Pulse Key</div>
+  <div class="ring">
+    <div class="core">
+      <div id="st">Locked</div>
+      <div id="bpm"><span id="bpmval">--</span><small>bpm</small></div>
+    </div>
+  </div>
+  <div id="hint" aria-live="polite">Click Unlock with pulse, then tap the ring twice when it glows amber.</div>
+  <div id="reason" aria-live="polite"></div>
+  <button id="unlock">Unlock with pulse</button>
+  <div id="vault"><div class="label">Vault</div><div class="body"></div></div>
+  <div id="log"></div>
+</main>
+<script>
+const stEl = document.getElementById('st');
+const bpmVal = document.getElementById('bpmval');
+const btn = document.getElementById('unlock');
+const hintEl = document.getElementById('hint');
+const reasonEl = document.getElementById('reason');
+const vaultEl = document.getElementById('vault');
+const vaultBody = vaultEl.querySelector('.body');
+const logEl = document.getElementById('log');
+let state = 'locked';
+
+const HINTS = {
+  locked: 'Click Unlock with pulse, then tap the ring twice when it glows amber.',
+  armed: 'Ring armed — double-tap it now, two quick taps with your other index finger.',
+  measuring: 'Listening for your pulse — hold still and keep the ring on your finger.',
+  unlocked: 'Pulse verified. Vault unlocked.'
+};
+const BTN = {
+  locked: 'Unlock with pulse',
+  armed: 'Waiting for tap\u2026',
+  measuring: 'Listening\u2026',
+  unlocked: 'Unlocked'
+};
+const STATE_LABEL = { locked: 'Locked', armed: 'Armed', measuring: 'Listening', unlocked: 'Open' };
+const REASONS = {
+  'tap timeout': 'No tap detected \u2014 press Unlock and try again.',
+  'no pulse detected': 'No pulse detected \u2014 make sure the ring is on your finger.',
+  'pulse implausible': 'Pulse looked irregular \u2014 try again.',
+  'ring unreachable': 'Lost contact with the ring.',
+  'ring removed': 'Ring removed \u2014 locked.',
+  'tap not confirmed': 'Tap not confirmed \u2014 try again.',
+  'ring not authenticated': 'Ring failed authentication.'
+};
+
+function log(msg) {
+  logEl.prepend(new Date().toLocaleTimeString() + '  ' + msg + '\n');
+}
+function render() {
+  document.body.dataset.state = state;
+  stEl.textContent = STATE_LABEL[state] || state;
+  hintEl.textContent = HINTS[state] || '';
+  btn.disabled = state !== 'locked';
+  btn.textContent = BTN[state] || 'Unlock with pulse';
+}
+async function refreshVault() {
+  if (state !== 'unlocked') { vaultEl.style.display = 'none'; return; }
+  const r = await fetch('/vault');
+  if (r.ok) {
+    vaultBody.textContent = await r.text();
+    vaultEl.style.display = 'block';
+    log('vault unlocked with a live pulse');
+  }
+}
+btn.addEventListener('click', async () => {
+  reasonEl.textContent = '';
+  const r = await fetch('/request-unlock', { method: 'POST' });
+  if (!r.ok) {
+    reasonEl.textContent = ((await r.json()).error) || 'request failed';
+  }
+});
+const ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/events');
+ws.onmessage = (ev) => {
+  const m = JSON.parse(ev.data);
+  if (m.type === 'state') {
+    state = m.state;
+    reasonEl.textContent = m.reason ? (REASONS[m.reason] || m.reason) : '';
+    bpmVal.textContent = m.bpm ? m.bpm : '--';
+    if (m.state === 'armed') log('armed \u2014 double-tap the ring now');
+    if (m.state === 'measuring') log('tap accepted \u2014 listening for your pulse');
+    if (m.state === 'locked' && m.reason) log('relocked \u2014 ' + (REASONS[m.reason] || m.reason));
+    render();
+    refreshVault();
+  } else if (m.type === 'tap') {
+    log('tap detected \u2014 tap once more');
+  }
+};
+ws.onclose = () => log('connection closed \u2014 reload the page');
+render();
+</script>
+</body>
+</html>

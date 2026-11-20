@@ -2,7 +2,7 @@
 
 ## State of implementation
 
-The **reported local Mac Rust demo** used an Oura Ring 4, a local daemon, tap detector, fresh live-beat acquisition, and local vault state. This part was reported functional and had 126 workspace tests at the last documented milestone, but its source is missing from this repository snapshot. The **offline Python verifier** in `research/identity/phase1_v2` is independently implemented and has not been wired to the daemon.
+The **reported local Mac Rust demo** used an Oura Ring 4, a local daemon, tap detector, fresh live-beat acquisition, and local vault state. This part was reported functional and had 126 workspace tests at the last documented milestone, and its crate source is now included at `mac-daemon/crates/pulse-key/`, pending restoration of the full Cargo workspace. The **offline Python verifier** in `research/identity/phase1_v2` is independently implemented and has not been wired to the daemon.
 
 The design below distinguishes reported demo behavior from proposed security hardening.
 
@@ -44,7 +44,7 @@ Device BLE authentication is **distinct** from biometric wearer identification; 
 
 ## Engineering gaps
 
-1. Import and audit the actual Rust Mac daemon and its tests.
+1. Restore the sibling `oura-link` crate and Cargo workspace, then compile and verify the imported Rust daemon and tests.
 2. Compare Python and Rust decoders against independent raw-byte fixtures.
 3. Freeze the corrected offline model before prospective trials.
 4. Validate owner acceptability across days before measuring blinded multiple-wearer rejection.
